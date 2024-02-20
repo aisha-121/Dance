@@ -96,15 +96,18 @@ public class DanceRoutine {
 					 }
 
 				 // takes a pic if binary digit is 1
-				 try {
+				 
 					 BufferedImage danceimg = swiftbot.takeGrayscaleStill(ImageSize.SQUARE_144x144);
 					 //ImageIO.write(img, "jpg", new File("/home/pi/Documents.jpg"));
-					 ImageIO.write(danceimg, "jpg", new File("/home/pi/Pictures"));
+					 //ImageIO.write(danceimg, "jpg", new File("/home/pi/Pictures"));
+					 try {
+						ImageIO.write(danceimg, "jpg", new File("danceimg.jpg"));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					 phototaken=+1; // counting how many photos were taken in the dance
-					 }  
-				 catch (IOException e) {
-					 ((Throwable) e).printStackTrace();
-					 }
+					
 			 }
 			 else if (reversedBinary.charAt(i)=='0') {
 				 //spin

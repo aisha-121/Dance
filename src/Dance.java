@@ -95,7 +95,7 @@ public class Dance {
 				// hexNumList = danceRoutine.SwiftbotDance(hexNum);
 				System.out.println(hexNumList);
 				System.out.println("Number of images taken: " + phototaken);
-				System.out.println("Images saved to: \"/home/pi/Pictures\"");
+				System.out.println("Images saved to: \"/home/pi/Documents\"");
 				System.out.println();
 				System.out.println("---------------------");
 				System.out.println("FAREWELL");
