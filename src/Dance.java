@@ -28,7 +28,7 @@ public class Dance {
 
 		hexNum = qr.gethexnum(swiftbot); // getting the hex number from the QR code input
 		hexNumList.add(hexNum);
-		System.out.println(hexNumList);
+
 		HexConversions hexConversions = new HexConversions(); // creating hex conversions object
 		binaryNumber = hexConversions.HextoBinary(hexNum); // converting input hex num to binary equivalent
 		decNum = hexConversions.BinarytoDecimal(binaryNumber); // converting binary number to decimal equivalent
@@ -37,11 +37,9 @@ public class Dance {
 
 		DanceRoutine danceRoutine = new DanceRoutine(swiftbot); // creating dance routine object
 		danceRoutine.SetSpeed(octalNum); // using octal equivalent to set the speed for routine
+		danceRoutine.setLED(decNum); // using decimal equivalent to set the RBG LEDs for routine
 
-		colourToLightUp = danceRoutine.setLED(decNum); // using decimal equivalent to set the RBG LEDs for routine
-
-		swiftbot.fillUnderlights(colourToLightUp);
-		System.out.println("LEDs turned on.");
+		//System.out.println("LEDs turned on.");
 		System.out.println();
 
 		// ask for user input to start the dance

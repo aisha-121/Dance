@@ -15,14 +15,14 @@ public class DanceRoutine {
 	 private int greenLED;
 	 private int blueLED;
 	 //private ArrayList<String> hexNumList;
-	 int[] colourToLightUp = {redLED,greenLED,blueLED};
+	 //int[] colourToLightUp = {redLED,greenLED,blueLED};
 	 int movement;
 	 
 	 
-	 SwiftBotAPI swiftBot; 
+	 SwiftBotAPI swiftbot; 
 	
 	 public DanceRoutine(SwiftBotAPI api) {
-		 swiftBot = api;
+		 swiftbot = api;
 	 }
 	
 	 
@@ -53,10 +53,12 @@ public class DanceRoutine {
 
 	        // Display additional information
 	        System.out.println("LED colours : (red " + redLED + ", green " + greenLED + ", blue " + blueLED + ")");
-	        
-	        //swiftBot.fillUnderlights(colourToLightUp);
-	        //System.out.println("LEDs turned on.");
-	        //System.out.println();
+	   	
+	        int[] colourToLightUp = {redLED,greenLED,blueLED};
+
+	        swiftbot.fillUnderlights(colourToLightUp);
+	        System.out.println("LEDs turned on.");
+	        System.out.println();
 			
 	        return colourToLightUp;
 	       
@@ -69,7 +71,7 @@ public class DanceRoutine {
 		 
 		 StringBuilder reversedBinary = new StringBuilder(binaryNumber).reverse();
 	     
-		 boolean blinkLeds = hexNum.length() == 2;
+		// boolean blinkLeds = hexNum.length() == 2;
 		 
 		 if (hexNum.length()==1) {
 			 movement = 1000; // if hexNum is 1 the SwiftBot movement is for 1 second
@@ -82,12 +84,12 @@ public class DanceRoutine {
 		 }
 		 
 		 for (i = reversedBinary.length() - 1; i>=0; i-- ) {
-			 
+
 			 if (reversedBinary.charAt(i)=='1') {
 				 
 				 try {
 					 //System.out.println("[moving forwards]");
-					 swiftBot.move(speed,speed,movement);
+					 swiftbot.move(speed,speed,movement);
 					 } 
 				 catch (IllegalArgumentException e) {
 					 e.printStackTrace();
@@ -95,7 +97,7 @@ public class DanceRoutine {
 
 				 // takes a pic if binary digit is 1
 				 try {
-					 BufferedImage danceimg = swiftBot.takeGrayscaleStill(ImageSize.SQUARE_144x144);
+					 BufferedImage danceimg = swiftbot.takeGrayscaleStill(ImageSize.SQUARE_144x144);
 					 //ImageIO.write(img, "jpg", new File("/home/pi/Documents.jpg"));
 					 ImageIO.write(danceimg, "jpg", new File("/home/pi/Pictures"));
 					 phototaken=+1; // counting how many photos were taken in the dance
@@ -107,8 +109,12 @@ public class DanceRoutine {
 			 else if (reversedBinary.charAt(i)=='0') {
 				 //spin
 				 //System.out.println("[spinning]");
-				 swiftBot.move(speed,0,3000);
-				 
+				 if (hexNum.length()==1) {
+					 swiftbot.move(speed,0,3000);
+				 }
+				 else if (hexNum.length()==2) {
+					 swiftbot.move(0,speed,3000);
+				 }
 			 }
 			 
 		 }
@@ -117,16 +123,17 @@ public class DanceRoutine {
 	 } // return phototaken???
 	 
 	 public void blinkeyblink() {
+		 int[] colourToLightUp = {redLED,greenLED,blueLED};
+
 		 
-		 
-			 swiftBot.fillUnderlights(colourToLightUp);
+			 swiftbot.fillUnderlights(colourToLightUp);
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				swiftBot.disableUnderlights();
+				swiftbot.disableUnderlights();
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
