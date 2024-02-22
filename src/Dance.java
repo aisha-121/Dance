@@ -19,6 +19,10 @@ public class Dance {
 	// main method
 	public static void main(String[] args) {
 		SwiftBotAPI swiftbot = new SwiftBotAPI(); // creating swiftbot object
+		System.out.println("------------------");
+	    System.out.println("BOOGIE BOT PROGRAM");
+	    System.out.println("------------------");
+		System.out.println();
 		BoogieBot(swiftbot);
 	}
 
@@ -57,14 +61,16 @@ public class Dance {
 			System.out.println("DANCE IN PROGRESS");
 			System.out.println("---------------------");
 			System.out.println();
-			danceRoutine.boogieTime(hexNum, binaryNumber); // hex number and binary equivalent is passed as an argument
+			//danceRoutine.boogieTime(hexNum, binaryNumber); // hex number and binary equivalent is passed as an argument
 															// for the dance routine
+			danceRoutine.startTasks(hexNum, binaryNumber);
 
 			// disable LEDs
 			swiftbot.disableUnderlights();
 			System.out.println("Dance completed!!! LEDs turned off.");
 			System.out.println();
-			System.out.println("Would you like to enter another Hex number? [ Y ] = Yes [ X ] = No.");
+			System.out.println("Would you like to enter another Hex number?");
+			System.out.println("[ Y ] = Yes [ X ] = No.");
 			System.out.println();
 			
 			swiftbot.disableButton(Button.A);
@@ -79,18 +85,16 @@ public class Dance {
 			// new hex number
 			swiftbot.enableButton(Button.Y, () -> {
 
-				System.out.println("testing");
 				BoogieBot(swiftbot);
-				System.out.println("test finished");
 				swiftbot.disableButton(Button.Y);
 
 			});
 			
 
 			swiftbot.enableButton(Button.X, () -> {
-				System.out.println("---------------------");
-				System.out.println("SORTED HEX NUMBERS");
-				System.out.println("---------------------");
+				System.out.println("------------------");
+		        System.out.println("SORTED HEX NUMBERS");
+		        System.out.println("------------------");
 				System.out.println();
 				// hexNumList = danceRoutine.SwiftbotDance(hexNum);
 				System.out.println(hexNumList);
@@ -103,6 +107,7 @@ public class Dance {
 				System.out.println();
 				System.out.println("Thanks for dancing with me.");
 				System.out.println("Let's do this again sometime xx");
+				System.out.println();
 				System.out.println("Program terminated.");
 
 				swiftbot.disableButton(Button.X);

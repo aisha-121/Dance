@@ -11,14 +11,11 @@ public class InputQRCode {
 	public static String gethexnum(SwiftBotAPI swiftBot) {
 
 		String hexNum = "";
-		System.out.println("---------------------");
-		System.out.println("BOOGIE BOT PROGRAM");
-		System.out.println("---------------------");
-		System.out.println();
+		
 	try {
 
        
-		System.out.println("Please testing scan a QR Code with a hexadecimal number (e.g. C or 1C)");
+		System.out.println("Please scan a QR Code with a hexadecimal number (e.g. C or 1C)");
 		System.out.println();
         Thread.sleep(10000);
 
@@ -64,7 +61,7 @@ public class InputQRCode {
 	        System.out.println("------");
 	        System.out.println();
 			System.out.println("No QR Code was found. Try adjusting the distance of the SwiftBot's Camera from the QR code, or try another.");
-        	e.printStackTrace();
+        	//e.printStackTrace();
         	System.exit(5);
 		}
 	

@@ -15,8 +15,10 @@ public class DanceRoutine {
 	 private int greenLED;
 	 private int blueLED;
 	 //private ArrayList<String> hexNumList;
-	 //int[] colourToLightUp = {redLED,greenLED,blueLED};
+	 int[] colourToLightUp = {redLED,greenLED,blueLED};
 	 int movement;
+	 volatile boolean isBoogieTimeRunning = false; // Shared flag
+
 	 
 	 
 	 SwiftBotAPI swiftbot; 
@@ -53,9 +55,9 @@ public class DanceRoutine {
 
 	        // Display additional information
 	        System.out.println("LED colours : (red " + redLED + ", green " + greenLED + ", blue " + blueLED + ")");
-	   	
+	        
 	        int[] colourToLightUp = {redLED,greenLED,blueLED};
-
+	        //System.out.println(colourToLightUp);
 	        swiftbot.fillUnderlights(colourToLightUp);
 	        System.out.println("LEDs turned on.");
 	        System.out.println();
@@ -64,7 +66,10 @@ public class DanceRoutine {
 	       
 	    }
 	 
-	 public int boogieTime(String hexNum, String binaryNumber) {
+	 
+	    
+	 
+	 /*public int boogieTime(String hexNum, String binaryNumber) {
 		 
 		 int i = 0;
 		 int phototaken = 0;
@@ -106,7 +111,7 @@ public class DanceRoutine {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					 phototaken=+1; // counting how many photos were taken in the dance
+					 phototaken +=1; // counting how many photos were taken in the dance
 					
 			 }
 			 else if (reversedBinary.charAt(i)=='0') {
@@ -123,26 +128,104 @@ public class DanceRoutine {
 		 }
 		return phototaken;
 		 
-	 } // return phototaken???
+	 } // return phototaken???*/
 	 
-	 public void blinkeyblink() {
-		 int[] colourToLightUp = {redLED,greenLED,blueLED};
-
+	 public void startTasks(String hexNum, String binaryNumber) {
 		 
-			 swiftbot.fillUnderlights(colourToLightUp);
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+	        // Runnable task for boogieTime
+	        Runnable boogieTask = () -> {
+	            // Your boogieTime method logic here, adjusted as needed
+		        int i = 0;
+		   		int phototaken = 0;
+		   		isBoogieTimeRunning = true;
+		   		 
+		   		 StringBuilder reversedBinary = new StringBuilder(binaryNumber).reverse();
+		   	     
+		   		 
+		   		 if (hexNum.length()==1) {
+		   			 movement = 1000; // if hexNum is 1 the SwiftBot movement is for 1 second
+		   			
+		   		 }
+		   		 else {
+		   			 movement = 500; // if hexNum is 2 digits then SwiftBot movement is 0.5s
+		   			 // make LEDs blink here
+		   			 
+		   		 }
+		   		 
+		   		 for (i = reversedBinary.length() - 1; i>=0; i-- ) {
+	
+		   			 if (reversedBinary.charAt(i)=='1') {
+		   				 
+		   				 try {
+		   					 //System.out.println("[moving forwards]");
+		   					 swiftbot.move(speed,speed,movement);
+		   					 } 
+		   				 catch (IllegalArgumentException e) {
+		   					 e.printStackTrace();
+		   					 }
+	
+		   				 // takes a pic if binary digit is 1
+		   				 
+		   					 BufferedImage danceimg = swiftbot.takeGrayscaleStill(ImageSize.SQUARE_144x144);
+		   					 //ImageIO.write(img, "jpg", new File("/home/pi/Documents.jpg"));
+		   					 //ImageIO.write(danceimg, "jpg", new File("/home/pi/Pictures"));
+		   					 try {
+		   						ImageIO.write(danceimg, "jpg", new File("danceimg.jpg"));
+		   					} catch (IOException e) {
+		   						// TODO Auto-generated catch block
+		   						e.printStackTrace();
+		   					}
+		   					 phototaken += 1;// counting how many photos were taken in the dance
+		   					
+		   			 }
+		   			 else if (reversedBinary.charAt(i)=='0') {
+		   				 //spin
+		   				 //System.out.println("[spinning]");
+		   				 if (hexNum.length()==1) {
+		   					 swiftbot.move(speed,0,3000);
+		   				 }
+		   				 else if (hexNum.length()==2) {
+		   					 swiftbot.move(0,speed,3000);
+		   				 }
+		   			 }
+		   			 
+		   		 }	   		isBoogieTimeRunning = false;
+
+
+	        };
+
+
+	        // Runnable task for blinkeyblink, conditionally executed
+	        Runnable blinkTask = () -> {
+	                // Your blinkeyblink method logic here
+	            	if (hexNum.length() == 2) {
+	            		do {
+	            		    try {
+	            		        swiftbot.disableUnderlights();
+	            		        Thread.sleep(500);
+	            		        int[] colourToLightUp = {redLED, greenLED, blueLED};
+	            		        swiftbot.fillUnderlights(colourToLightUp);
+	            		        Thread.sleep(500);
+	            		    } catch (InterruptedException e) {
+	            		        e.printStackTrace();
+	            		        Thread.currentThread().interrupt(); // Properly handle the interrupt
+	            		    }
+	            		} while (isBoogieTimeRunning); // Direct use of volatile boolean in condition
+	                }swiftbot.disableUnderlights();
+	        };
+
+	        // Start both tasks as threads
+	        Thread blinkThread = new Thread(blinkTask);
+	        Thread boogieThread = new Thread(boogieTask);
+	       
+	        blinkThread.start();
+	        boogieThread.start();
+	        try {
+				boogieThread.join();
+		        blinkThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 				}
-				swiftbot.disableUnderlights();
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-	 }
+	     }
 	 
 }
