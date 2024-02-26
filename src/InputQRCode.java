@@ -37,7 +37,7 @@ public class InputQRCode {
                 System.out.println("ERROR!");
                 System.out.println("------");
                 System.out.println();
-        		System.out.println("QR code was a Hex number of more then 2 digits! Please input a Hex number of no more than 2 digits.");
+        		System.out.println("QR code was a Hex number of more than 2 digits! Please input a Hex number of no more than 2 digits.");
             	System.exit(5);
         		
         	}

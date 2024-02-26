@@ -74,7 +74,7 @@ public class Dance {
 			System.out.println("Dance completed!!! LEDs turned off.");
 			System.out.println();
 			System.out.println("Would you like to enter another Hex number?");
-			System.out.println("[ Y ] = Yes [ X ] = No.");
+			System.out.println("[ Y ] = Yes [ X ] = No");
 			System.out.println();
 			
 		});  
