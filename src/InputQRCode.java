@@ -32,9 +32,7 @@ public class InputQRCode {
         		System.out.println("No QR Code was found. Try adjusting the distance of the SwiftBot's Camera from the QR code, or try another.");
         		System.exit(5);
         	}
-        else // error screen of hex num is larger than 2
-        	{
-        	if(hexNum.length()>2) {
+        else if(hexNum.length()>2) { // error screen of hex num is larger than 2
         		System.out.println("------");
                 System.out.println("ERROR!");
                 System.out.println("------");
@@ -43,15 +41,7 @@ public class InputQRCode {
             	System.exit(5);
         		
         	}
-        else if (hexNum=="0") {
-        		System.out.println("------");
-                System.out.println("ERROR!");
-                System.out.println("------");
-                System.out.println();
-            	System.out.println("The Hexadecimal number inputted was 0, which would be a very boring dance :( Please pick a different hex number."); // error if hex num = 0
-            	System.exit(5);
-        		}
-        	}
+
     	}	
 	
 	catch(Exception e)// error if no QR code is found

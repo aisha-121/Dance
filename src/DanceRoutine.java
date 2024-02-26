@@ -1,6 +1,4 @@
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import java.io.*;
 
@@ -9,15 +7,15 @@ import swiftbot.SwiftBotAPI;
 
 
 public class DanceRoutine {
-	 private String hexNum;
 	 private int speed;
 	 private int redLED;
 	 private int greenLED;
 	 private int blueLED;
-	 //private ArrayList<String> hexNumList;
 	 int[] colourToLightUp = {redLED,greenLED,blueLED};
 	 int movement;
 	 volatile boolean isBoogieTimeRunning = false; // Shared flag
+	 public int phototaken = 0;
+
 
 	 
 	 
@@ -67,79 +65,13 @@ public class DanceRoutine {
 	    }
 	 
 	 
-	    
-	 
-	 /*public int boogieTime(String hexNum, String binaryNumber) {
-		 
-		 int i = 0;
-		 int phototaken = 0;
-		 
-		 StringBuilder reversedBinary = new StringBuilder(binaryNumber).reverse();
-	     
-		// boolean blinkLeds = hexNum.length() == 2;
-		 
-		 if (hexNum.length()==1) {
-			 movement = 1000; // if hexNum is 1 the SwiftBot movement is for 1 second
-			
-		 }
-		 else {
-			 movement = 500; // if hexNum is 2 digits then SwiftBot movement is 0.5s
-			 // make LEDs blink here
-			 
-		 }
-		 
-		 for (i = reversedBinary.length() - 1; i>=0; i-- ) {
-
-			 if (reversedBinary.charAt(i)=='1') {
-				 
-				 try {
-					 //System.out.println("[moving forwards]");
-					 swiftbot.move(speed,speed,movement);
-					 } 
-				 catch (IllegalArgumentException e) {
-					 e.printStackTrace();
-					 }
-
-				 // takes a pic if binary digit is 1
-				 
-					 BufferedImage danceimg = swiftbot.takeGrayscaleStill(ImageSize.SQUARE_144x144);
-					 //ImageIO.write(img, "jpg", new File("/home/pi/Documents.jpg"));
-					 //ImageIO.write(danceimg, "jpg", new File("/home/pi/Pictures"));
-					 try {
-						ImageIO.write(danceimg, "jpg", new File("danceimg.jpg"));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					 phototaken +=1; // counting how many photos were taken in the dance
-					
-			 }
-			 else if (reversedBinary.charAt(i)=='0') {
-				 //spin
-				 //System.out.println("[spinning]");
-				 if (hexNum.length()==1) {
-					 swiftbot.move(speed,0,3000);
-				 }
-				 else if (hexNum.length()==2) {
-					 swiftbot.move(0,speed,3000);
-				 }
-			 }
-			 
-		 }
-		return phototaken;
-		 
-	 } // return phototaken???*/
-	 
-	 public void startTasks(String hexNum, String binaryNumber) {
+	 public int boogieTime(String hexNum, String binaryNumber) {
 		 
 	        // Runnable task for boogieTime
 	        Runnable boogieTask = () -> {
 	            // Your boogieTime method logic here, adjusted as needed
 		        int i = 0;
-		   		int phototaken = 0;
 		   		isBoogieTimeRunning = true;
-		   		 
-		   		 StringBuilder reversedBinary = new StringBuilder(binaryNumber).reverse();
 		   	     
 		   		 
 		   		 if (hexNum.length()==1) {
@@ -152,9 +84,9 @@ public class DanceRoutine {
 		   			 
 		   		 }
 		   		 
-		   		 for (i = reversedBinary.length() - 1; i>=0; i-- ) {
+		   		 for (i = binaryNumber.length() - 1; i>=0; i-- ) {
 	
-		   			 if (reversedBinary.charAt(i)=='1') {
+		   			 if (binaryNumber.charAt(i)=='1') {
 		   				 
 		   				 try {
 		   					 //System.out.println("[moving forwards]");
@@ -165,20 +97,22 @@ public class DanceRoutine {
 		   					 }
 	
 		   				 // takes a pic if binary digit is 1
-		   				 
-		   					 BufferedImage danceimg = swiftbot.takeGrayscaleStill(ImageSize.SQUARE_144x144);
-		   					 //ImageIO.write(img, "jpg", new File("/home/pi/Documents.jpg"));
-		   					 //ImageIO.write(danceimg, "jpg", new File("/home/pi/Pictures"));
-		   					 try {
-		   						ImageIO.write(danceimg, "jpg", new File("danceimg.jpg"));
-		   					} catch (IOException e) {
-		   						// TODO Auto-generated catch block
-		   						e.printStackTrace();
-		   					}
-		   					 phototaken += 1;// counting how many photos were taken in the dance
+						
+		   				 BufferedImage danceimg = swiftbot.takeGrayscaleStill(ImageSize.SQUARE_144x144);
+
+		   				String Pictures = String.format("danceimg_%d.jpg", phototaken++); // Increment the counter for each image
+
+			   			// Combine the directory path with the filename
+			   			File outputFile = new File("/home/pi/Documents/DancePic", Pictures);
+	
+			   			try {
+			   			    ImageIO.write(danceimg, "jpg", outputFile);
+			   			} catch (IOException e) {
+			   			    e.printStackTrace();
+			   			}
 		   					
 		   			 }
-		   			 else if (reversedBinary.charAt(i)=='0') {
+		   			 else if (binaryNumber.charAt(i)=='0') {
 		   				 //spin
 		   				 //System.out.println("[spinning]");
 		   				 if (hexNum.length()==1) {
@@ -226,6 +160,8 @@ public class DanceRoutine {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				}
+	        
+			return phototaken;
 	     }
 	 
 }
