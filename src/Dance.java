@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ public class Dance {
 	private static int octalNum;
 	private static String binaryNumber = "";
 	public static ArrayList<String> hexNumList = new ArrayList<String>();
-	private static int phototaken;
+	private static AtomicInteger phototaken = new AtomicInteger(0);
 
 	
 	// main method
@@ -32,9 +33,9 @@ public class Dance {
 
 	public static void BoogieBot(SwiftBotAPI swiftbot) {
 
-		//InputQRCode qr = new InputQRCode();
+		InputQRCode qr = new InputQRCode();
 
-		hexNum = InputQRCode.gethexnum(swiftbot); // getting the hex number from the QR code input
+		hexNum = qr.gethexnum(swiftbot); // getting the hex number from the QR code input
 		hexNumList.add(hexNum);
 
 		HexConversions hexConversions = new HexConversions(); // creating hex conversions object
@@ -46,9 +47,6 @@ public class Dance {
 		DanceRoutine danceRoutine = new DanceRoutine(swiftbot); // creating dance routine object
 		danceRoutine.SetSpeed(octalNum); // using octal equivalent to set the speed for routine
 		danceRoutine.setLED(decNum); // using decimal equivalent to set the RBG LEDs for routine
-
-		//System.out.println("LEDs turned on.");
-		System.out.println();
 
 		// ask for user input to start the dance
 		System.out.println("Press 'A' to start the dance or 'B' to quit");
@@ -65,10 +63,9 @@ public class Dance {
 			System.out.println("DANCE IN PROGRESS");
 			System.out.println("---------------------");
 			System.out.println();
-
-			phototaken += danceRoutine.boogieTime(hexNum, binaryNumber); // hex number and binary equivalent is passed as an argument for the dance routine
-			swiftbot.disableButton(Button.A);
 			
+
+			danceRoutine.boogieTime(hexNum, binaryNumber, phototaken); // hex number and binary equivalent is passed as an argument for the dance routine
 			// disable LEDs
 			swiftbot.disableUnderlights();
 			System.out.println("Dance completed!!! LEDs turned off.");
@@ -81,12 +78,14 @@ public class Dance {
 		
 			// ask for more input using buttons 
 			// new hex number
-			swiftbot.enableButton(Button.Y, () -> {
-
-				BoogieBot(swiftbot);
-				swiftbot.disableButton(Button.Y);
-
-			});
+		
+		swiftbot.enableButton(Button.Y, () -> {
+			
+			swiftbot.disableAllButtons();
+			BoogieBot(swiftbot);
+			
+		});
+			
 			
 
 			swiftbot.enableButton(Button.X, () -> {
@@ -108,7 +107,8 @@ public class Dance {
 				System.out.println("Program terminated.");
 				System.out.println();
 
-				swiftbot.disableButton(Button.X);
+				//swiftbot.disableButton(Button.X);
+				swiftbot.disableAllButtons();
 				System.exit(5);
 
 			});
@@ -116,12 +116,13 @@ public class Dance {
 
 
 		swiftbot.enableButton(Button.B, () -> {
+			
+			swiftbot.disableUnderlights();
 			System.out.println("Program terminated.");
 			System.exit(5);
-			swiftbot.disableButton(Button.B);
+			swiftbot.disableAllButtons();
+			
 		});
-		
-		// swiftbot.disableAllButtons();
 
 	}
 
@@ -139,7 +140,7 @@ public class Dance {
 
 	}
 	
-	public static void sortedHexList(ArrayList<String> hexNumList, int phototaken, String filename) {
+	public static void sortedHexList(ArrayList<String> hexNumList, AtomicInteger phototaken, String filename) {
 		Collections.sort(hexNumList, new Comparator<String>() {
             public int compare(String hex1, String hex2) {
                 // Convert hex strings to integer values for comparison

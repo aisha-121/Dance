@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 
 public class InputQRCode {
 	
-	public static String gethexnum(SwiftBotAPI swiftBot) {
+	public String gethexnum(SwiftBotAPI swiftBot) {
 
 		String hexNum = "";
 		

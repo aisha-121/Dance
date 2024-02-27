@@ -1,6 +1,7 @@
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import swiftbot.ImageSize;
 import swiftbot.SwiftBotAPI;
@@ -14,7 +15,7 @@ public class DanceRoutine {
 	 int[] colourToLightUp = {redLED,greenLED,blueLED};
 	 int movement;
 	 volatile boolean isBoogieTimeRunning = false; // Shared flag
-	 public int phototaken = 0;
+	 //public int phototaken;
 
 
 	 
@@ -65,7 +66,7 @@ public class DanceRoutine {
 	    }
 	 
 	 
-	 public int boogieTime(String hexNum, String binaryNumber) {
+	 public void boogieTime(String hexNum, String binaryNumber, AtomicInteger phototaken) {
 		 
 	        // Runnable task for boogieTime
 	        Runnable boogieTask = () -> {
@@ -85,7 +86,7 @@ public class DanceRoutine {
 		   		 }
 		   		 
 		   		 for (i = binaryNumber.length() - 1; i>=0; i-- ) {
-	
+
 		   			 if (binaryNumber.charAt(i)=='1') {
 		   				 
 		   				 try {
@@ -95,16 +96,17 @@ public class DanceRoutine {
 		   				 catch (IllegalArgumentException e) {
 		   					 e.printStackTrace();
 		   					 }
-	
+
 		   				 // takes a pic if binary digit is 1
 						
 		   				 BufferedImage danceimg = swiftbot.takeGrayscaleStill(ImageSize.SQUARE_144x144);
 
-		   				String Pictures = String.format("danceimg_%d.jpg", phototaken++); // Increment the counter for each image
-
+		   				String Pictures = String.format("danceimg_%d.jpg", phototaken.getAndIncrement());
+		   	            // Use Pictures for file operations); // Increment the counter for each image
+		   				
 			   			// Combine the directory path with the filename
 			   			File outputFile = new File("/home/pi/Documents/DancePic", Pictures);
-	
+
 			   			try {
 			   			    ImageIO.write(danceimg, "jpg", outputFile);
 			   			} catch (IOException e) {
@@ -145,7 +147,7 @@ public class DanceRoutine {
 	            		        Thread.currentThread().interrupt(); // Properly handle the interrupt
 	            		    }
 	            		} while (isBoogieTimeRunning); // Direct use of volatile boolean in condition
-	                }swiftbot.disableUnderlights();
+	                }
 	        };
 
 	        // Start both tasks as threads
@@ -161,7 +163,7 @@ public class DanceRoutine {
 				e.printStackTrace();
 				}
 	        
-			return phototaken;
+			
 	     }
 	 
 }
